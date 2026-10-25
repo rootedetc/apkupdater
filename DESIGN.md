@@ -50,12 +50,15 @@ No text below 13sp anywhere, and 13sp only for a count badge.
 ## Geometry
 
 - Overscan margin: 40dp sides, 28dp top, 20dp bottom.
-- Rail: 200dp wide; items 46dp tall, 6dp apart.
+- Rail: 200dp wide; items 46dp tall, 6dp apart; no footer label.
 - Content pane gap after rail: 36dp.
 - Row: 96dp tall, 10dp apart, 10dp radius, 1dp hairline.
 - App icon: 64dp in lists, 56dp on Apps, 30dp in the rail lockup.
 - Pills: 44dp tall, fully rounded, 18dp side padding. Chips: 40dp.
-- Settings rows: 56dp tall, 8dp radius, 6dp apart.
+- Settings rows: 56dp tall, 8dp radius, 6dp apart. Section headers are one row tall
+  (56dp) and link rows exactly two (118dp), so the settings list shares one 62dp pitch.
+- Lists are trimmed to a whole number of rows and focus scrolls by whole rows, so a row
+  is never sliced by the panel edge.
 
 ## Components (`ui/tv/TvComponents.kt`)
 

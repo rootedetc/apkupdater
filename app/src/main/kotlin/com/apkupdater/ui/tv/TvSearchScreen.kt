@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -60,6 +61,13 @@ fun TvSearchScreen(viewModel: SearchViewModel) {
 	val state by viewModel.state().collectAsStateWithLifecycle()
 	val uriHandler = LocalUriHandler.current
 	val firstResult = remember { FocusRequester() }
+	val (listState, onRowFocused) = rememberTvRowList()
+
+	// A new result set starts at the top: the IME and the old scroll position
+	// otherwise leave the first card half hidden under the field.
+	LaunchedEffect((state as? SearchUiState.Success)?.updates?.firstOrNull()?.id) {
+		listState.scrollToItem(0)
+	}
 
 	// Results stay on screen when the query shrinks below the search threshold.
 	LaunchedEffect(value) {
@@ -111,10 +119,12 @@ fun TvSearchScreen(viewModel: SearchViewModel) {
 					}
 				} else {
 					LazyColumn(
-						modifier = Modifier.fillMaxSize(),
+						state = listState,
+						modifier = Modifier.fillMaxSize().tvWholeRows(),
 						verticalArrangement = Arrangement.spacedBy(TvDims.RowGap)
 					) {
 						itemsIndexed(current.updates, key = { _, app -> app.id }) { index, app ->
+							Box(Modifier.onFocusChanged { if (it.hasFocus) onRowFocused(index) }) {
 							TvActionRow {
 								if (app.iconUri != Uri.EMPTY) {
 									TvImage(app.iconUri)
@@ -164,6 +174,7 @@ fun TvSearchScreen(viewModel: SearchViewModel) {
 										primary = true
 									)
 								}
+							}
 							}
 						}
 					}

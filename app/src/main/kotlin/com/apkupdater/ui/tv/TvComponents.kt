@@ -10,6 +10,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -19,8 +20,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -31,12 +35,15 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
@@ -51,6 +58,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import kotlinx.coroutines.launch
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -83,7 +91,7 @@ fun TvActionRow(
 	Surface(
 		modifier = modifier
 			.fillMaxWidth()
-			.height(TvDims.RowHeight)
+			.requiredHeight(TvDims.RowHeight)
 			.alpha(if (dimmed) 0.55f else 1f)
 			.onFocusChanged { focused = it.hasFocus },
 		shape = RoundedCornerShape(10.dp),
@@ -244,13 +252,21 @@ fun TvScreenHeader(
 	)
 }
 
+/*
+ * Section headers are exactly one settings row tall so the whole list stays on a
+ * single pitch; that is what makes the bottom edge land between rows.
+ */
 @Composable
-fun TvSection(title: String) = Text(
-	text = title,
-	style = MaterialTheme.typography.bodyLarge,
-	color = MaterialTheme.colorScheme.onSurfaceVariant,
-	modifier = Modifier.padding(top = 22.dp, bottom = 10.dp)
-)
+fun TvSection(title: String) = Box(
+	modifier = Modifier.fillMaxWidth().requiredHeight(TvDims.SettingRow),
+	contentAlignment = Alignment.CenterStart
+) {
+	Text(
+		text = title,
+		style = MaterialTheme.typography.bodyLarge,
+		color = MaterialTheme.colorScheme.onSurfaceVariant
+	)
+}
 
 @Composable
 fun TvAppIcon(packageName: String, size: Dp = TvDims.Icon) = AsyncImage(
@@ -366,44 +382,51 @@ fun TvEmptyState(
  * A row of blank cards would read as "broken", not "busy".
  */
 @Composable
-fun TvSkeletonList(count: Int = 4) = Column(
-	modifier = Modifier.fillMaxSize(),
-	verticalArrangement = Arrangement.spacedBy(TvDims.RowGap)
-) {
-	repeat(count) { index ->
-		Surface(
-			modifier = Modifier.fillMaxWidth().height(TvDims.RowHeight),
-			shape = RoundedCornerShape(10.dp),
-			color = MaterialTheme.colorScheme.surface,
-			border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
-		) {
-			Row(
-				modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
-				verticalAlignment = Alignment.CenterVertically
+fun TvSkeletonList(count: Int = 4) = BoxWithConstraints(Modifier.fillMaxSize()) {
+	// Only show cards that fit whole: a skeleton sliced by the panel edge looks
+	// like the bug it is meant to stand in for.
+	val pitch = TvDims.RowHeight + TvDims.RowGap
+	val fit = ((maxHeight + TvDims.RowGap) / pitch).toInt().coerceAtLeast(1)
+
+	Column(
+		modifier = Modifier.fillMaxSize(),
+		verticalArrangement = Arrangement.spacedBy(TvDims.RowGap)
+	) {
+		repeat(count.coerceAtMost(fit)) { index ->
+			Surface(
+				modifier = Modifier.fillMaxWidth().requiredHeight(TvDims.RowHeight),
+				shape = RoundedCornerShape(10.dp),
+				color = MaterialTheme.colorScheme.surface,
+				border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
 			) {
-				Box(
-					Modifier
-						.size(TvDims.Icon)
-						.clip(RoundedCornerShape(12.dp))
-						.tvShimmer()
-				)
-				Spacer(Modifier.width(18.dp))
-				Column(Modifier.weight(1f)) {
+				Row(
+					modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
+					verticalAlignment = Alignment.CenterVertically
+				) {
 					Box(
 						Modifier
-							.fillMaxWidth(if (index % 2 == 0) 0.34f else 0.28f)
-							.height(20.dp)
-							.clip(RoundedCornerShape(6.dp))
+							.size(TvDims.Icon)
+							.clip(RoundedCornerShape(12.dp))
 							.tvShimmer()
 					)
-					Spacer(Modifier.height(12.dp))
-					Box(
-						Modifier
-							.fillMaxWidth(if (index % 2 == 0) 0.22f else 0.26f)
-							.height(14.dp)
-							.clip(RoundedCornerShape(6.dp))
-							.tvShimmer()
-					)
+					Spacer(Modifier.width(18.dp))
+					Column(Modifier.weight(1f)) {
+						Box(
+							Modifier
+								.fillMaxWidth(if (index % 2 == 0) 0.34f else 0.28f)
+								.height(20.dp)
+								.clip(RoundedCornerShape(6.dp))
+								.tvShimmer()
+						)
+						Spacer(Modifier.height(12.dp))
+						Box(
+							Modifier
+								.fillMaxWidth(if (index % 2 == 0) 0.22f else 0.26f)
+								.height(14.dp)
+								.clip(RoundedCornerShape(6.dp))
+								.tvShimmer()
+						)
+					}
 				}
 			}
 		}
@@ -454,7 +477,7 @@ fun TvSwitchRow(
 		onClick = { onChange(!checked) },
 		modifier = Modifier
 			.fillMaxWidth()
-			.height(56.dp)
+			.requiredHeight(56.dp)
 			.onFocusChanged { focused = it.isFocused },
 		shape = RoundedCornerShape(8.dp),
 		color = if (focused) colors.surfaceVariant else colors.surface,
@@ -492,7 +515,7 @@ fun TvCycleRow(
 		onClick = onClick,
 		modifier = Modifier
 			.fillMaxWidth()
-			.height(56.dp)
+			.requiredHeight(56.dp)
 			.onFocusChanged { focused = it.isFocused },
 		shape = RoundedCornerShape(8.dp),
 		color = if (focused) colors.surfaceVariant else colors.surface,
@@ -539,7 +562,7 @@ fun TvStepperRow(
 	Surface(
 		modifier = Modifier
 			.fillMaxWidth()
-			.height(56.dp)
+			.requiredHeight(56.dp)
 			.onFocusChanged { focused = it.hasFocus },
 		shape = RoundedCornerShape(8.dp),
 		color = if (focused) colors.surfaceVariant else colors.surface,
@@ -576,7 +599,7 @@ fun TvStepperRow(
 @Composable
 fun TvTextRow(label: String, value: String) {
 	Row(
-		modifier = Modifier.fillMaxWidth().height(56.dp).padding(horizontal = 16.dp),
+		modifier = Modifier.fillMaxWidth().requiredHeight(56.dp).padding(horizontal = 16.dp),
 		verticalAlignment = Alignment.CenterVertically
 	) {
 		Text(
@@ -607,6 +630,7 @@ fun TvLinkRow(
 		onClick = onClick,
 		modifier = modifier
 			.fillMaxWidth()
+			.requiredHeight(TvDims.LinkRow)
 			.onFocusChanged { focused = it.isFocused },
 		shape = RoundedCornerShape(10.dp),
 		color = if (focused) colors.surfaceVariant else colors.surface,
@@ -655,3 +679,62 @@ fun TvMeta(text: String) = Text(
 	maxLines = 1,
 	overflow = TextOverflow.Ellipsis
 )
+
+
+/*
+ * Row-aligned list scrolling. Compose reveals the focused *pill*, not the row
+ * around it, so a row could hang past the panel edge. The viewport is trimmed
+ * to whole rows (tvWholeRows) and this scrolls by whole rows, so a row is never
+ * sliced: focus a row that does not fit and the list pages by exactly one row.
+ */
+@Composable
+fun rememberTvRowList(
+	row: Dp = TvDims.RowHeight,
+	spacing: Dp = TvDims.RowGap
+): Pair<LazyListState, (Int) -> Unit> {
+	val state = rememberLazyListState()
+	val scope = rememberCoroutineScope()
+	val pitch = with(LocalDensity.current) { (row + spacing).roundToPx() }
+	val gap = with(LocalDensity.current) { spacing.roundToPx() }
+
+	val onRowFocused: (Int) -> Unit = { index ->
+		val info = state.layoutInfo
+		val viewport = info.viewportEndOffset - info.viewportStartOffset
+		val rows = ((viewport + gap) / pitch).coerceAtLeast(1)
+		val item = info.visibleItemsInfo.firstOrNull { it.index == index }
+		val fullyVisible = item != null &&
+			item.offset >= info.viewportStartOffset &&
+			item.offset + item.size <= info.viewportEndOffset
+		if (!fullyVisible) {
+			// Below the viewport: make the row the last whole row. Above: the first.
+			val below = item == null || item.offset >= info.viewportEndOffset
+			val target = (if (below) index - (rows - 1) else index).coerceAtLeast(0)
+			scope.launch { state.scrollToItem(target, 0) }
+		}
+	}
+	return state to onRowFocused
+}
+
+/*
+ * A list that runs to the panel edge gets sliced mid-row, which reads as a
+ * rendering bug rather than "there is more below". Rows are a fixed height, so
+ * the viewport is trimmed to a whole number of them: the remainder becomes
+ * bottom breathing room and scrolling always lands on a row boundary.
+ */
+fun Modifier.tvWholeRows(
+	row: Dp = TvDims.RowHeight,
+	spacing: Dp = TvDims.RowGap
+): Modifier = layout { measurable, constraints ->
+	val gap = spacing.roundToPx()
+	val pitch = (row + spacing).roundToPx()
+	val available = constraints.maxHeight
+	if (available == Int.MAX_VALUE || available <= 0) {
+		val placeable = measurable.measure(constraints)
+		layout(placeable.width, placeable.height) { placeable.place(0, 0) }
+	} else {
+		val rows = ((available + gap) / pitch).coerceAtLeast(1)
+		val target = (rows * pitch - gap).coerceAtMost(available)
+		val placeable = measurable.measure(constraints.copy(minHeight = target, maxHeight = target))
+		layout(placeable.width, placeable.height) { placeable.place(0, 0) }
+	}
+}

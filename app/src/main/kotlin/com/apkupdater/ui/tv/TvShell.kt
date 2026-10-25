@@ -120,6 +120,13 @@ fun TvNavRail(
 	onSelect: (String) -> Unit
 ) {
 	val screens = listOf(Screen.Updates, Screen.Apps, Screen.Search, Screen.Settings)
+	// Switching tabs tears down the content focus tree; without this the ring
+	// drifts to a neighbouring rail item instead of staying on the one chosen.
+	val railFocus = remember { screens.associate { it.route to FocusRequester() } }
+	LaunchedEffect(currentRoute) {
+		delay(60)
+		runCatching { railFocus[currentRoute]?.requestFocus() }
+	}
 
 	Column(
 		modifier = Modifier.width(TvDims.RailWidth).fillMaxHeight(),
@@ -146,20 +153,10 @@ fun TvNavRail(
 				selected = selected,
 				badge = badges[screen.route].orEmpty(),
 				onClick = { onSelect(screen.route) },
-				modifier = if (screen.route == initialRoute) Modifier.focusRequester(initialFocus) else Modifier
+				modifier = Modifier.focusRequester(railFocus.getValue(screen.route))
 			)
 		}
 
-		Spacer(Modifier.weight(1f))
-
-		Text(
-			text = "TV build · ${BuildConfig.VERSION_NAME}",
-			style = MaterialTheme.typography.bodySmall,
-			color = MaterialTheme.colorScheme.onSurfaceVariant,
-			maxLines = 1,
-			overflow = TextOverflow.Ellipsis,
-			modifier = Modifier.padding(start = 10.dp, bottom = 4.dp)
-		)
 	}
 }
 

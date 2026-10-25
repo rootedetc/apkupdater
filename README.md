@@ -24,10 +24,15 @@ Settings.
 | ![Search results](docs/screenshots/search.png) | ![Settings](docs/screenshots/settings.png) |
 | **Scheduled checks** | **About** |
 | ![Hour stepper](docs/screenshots/settings-schedule.png) | ![About sub-page](docs/screenshots/about.png) |
-| **Loading** | **Nothing pending** |
-| ![Skeleton rows](docs/screenshots/updates-loading.png) | ![Empty state](docs/screenshots/updates-empty.png) |
 
 All captures are 1080p from a Google TV emulator, driven with a D-pad, on this build.
+
+## Not cut off at the edge
+
+The one thing lists on a TV usually get wrong: a row sliced in half by the bottom of the
+panel. Here the viewport is trimmed to a whole number of rows and focus moves the list by
+whole rows, so the bottom edge always lands between two rows. Nothing is ever half visible,
+and the focused row is always whole.
 
 ## Why a fork
 
@@ -39,7 +44,7 @@ comfortably. This fork keeps the engine and replaces the surface.
 
 - **Permanent left rail** (Updates / Apps / Search / Settings) with the current tab lit, a
   10-foot type scale, overscan-safe margins, and one focus ring — the only glowing thing on
-  screen.
+  screen. No build stamp or footer; the version lives in Settings.
 - **Rows, not cards.** Icon, name, `old → new`, source, one-line changelog, and exactly one
   primary action (Update) plus a quiet skip. The row highlights when its action holds focus;
   the row itself is not a click target.

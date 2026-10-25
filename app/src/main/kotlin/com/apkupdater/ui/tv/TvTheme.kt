@@ -111,6 +111,13 @@ object TvDims {
 	val RowHeight = 96.dp
 	val RowGap = 10.dp
 	val Icon = 64.dp
+
+	/** Settings rows ride the same whole-row rule at a shorter pitch. */
+	val SettingRow = 56.dp
+	val SettingGap = 6.dp
+
+	/** A two-line link row occupies exactly two settings rows. */
+	val LinkRow = 118.dp
 }
 
 @Composable

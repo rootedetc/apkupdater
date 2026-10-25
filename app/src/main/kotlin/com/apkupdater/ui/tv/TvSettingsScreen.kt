@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -79,12 +80,11 @@ private fun TvSettingsPage(viewModel: SettingsViewModel, aboutRow: FocusRequeste
 		val revision = tick
 		TvScreenHeader(
 			title = stringResource(R.string.tab_settings),
-			subtitle = "APKUpdater ${BuildConfig.VERSION_NAME} · TV layout"
+			subtitle = BuildConfig.VERSION_NAME
 		)
 		LazyColumn(
-			modifier = Modifier.fillMaxSize(),
-			verticalArrangement = Arrangement.spacedBy(6.dp),
-			contentPadding = PaddingValues(bottom = 24.dp)
+						modifier = Modifier.fillMaxSize().tvWholeRows(TvDims.SettingRow, TvDims.SettingGap),
+			verticalArrangement = Arrangement.spacedBy(TvDims.SettingGap)
 		) {
 			// The list content is memoized; reading tick inside it keeps every row
 			// tied to the preference writes above.
@@ -338,9 +338,9 @@ private fun TvAboutPage(viewModel: SettingsViewModel, firstLink: FocusRequester)
 			}
 		)
 		LazyColumn(
-			modifier = Modifier.fillMaxSize(),
-			verticalArrangement = Arrangement.spacedBy(10.dp),
-			contentPadding = PaddingValues(bottom = 24.dp)
+			state = rememberLazyListState(),
+			modifier = Modifier.fillMaxSize().tvWholeRows(TvDims.SettingRow, TvDims.SettingGap),
+			verticalArrangement = Arrangement.spacedBy(TvDims.SettingGap)
 		) {
 			item {
 				TvLinkRow(

@@ -2,14 +2,13 @@ package com.apkupdater.ui.tv
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.MaterialTheme
@@ -18,6 +17,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.foundation.layout.Box
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -39,6 +40,7 @@ import com.apkupdater.viewmodel.UpdatesViewModel
 fun TvUpdatesScreen(viewModel: UpdatesViewModel) {
 	val state by viewModel.state().collectAsStateWithLifecycle()
 	val handler = LocalUriHandler.current
+	val (listState, onRowFocused) = rememberTvRowList()
 
 	Column(Modifier.fillMaxSize()) {
 		TvScreenHeader(
@@ -68,11 +70,12 @@ fun TvUpdatesScreen(viewModel: UpdatesViewModel) {
 				)
 			} else {
 				LazyColumn(
-					modifier = Modifier.fillMaxSize(),
-					verticalArrangement = Arrangement.spacedBy(TvDims.RowGap),
-					contentPadding = PaddingValues(bottom = 24.dp)
+					state = listState,
+					modifier = Modifier.fillMaxSize().tvWholeRows(),
+					verticalArrangement = Arrangement.spacedBy(TvDims.RowGap)
 				) {
-					items(current.updates, key = { it.id }) { app ->
+					itemsIndexed(current.updates, key = { _, app -> app.id }) { index, app ->
+						Box(Modifier.onFocusChanged { if (it.hasFocus) onRowFocused(index) }) {
 						UpdateRow(
 							displayName = app.displayName(),
 							oldVersion = app.oldVersion,
@@ -84,6 +87,7 @@ fun TvUpdatesScreen(viewModel: UpdatesViewModel) {
 							onInstall = { viewModel.install(app, handler) },
 							onSkip = { viewModel.ignoreVersion(app.id) }
 						)
+						}
 					}
 				}
 			}

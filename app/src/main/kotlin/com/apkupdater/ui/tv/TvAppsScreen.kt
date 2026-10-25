@@ -2,20 +2,21 @@ package com.apkupdater.ui.tv
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.foundation.layout.Box
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -34,6 +35,7 @@ import com.apkupdater.viewmodel.AppsViewModel
 fun TvAppsScreen(viewModel: AppsViewModel) {
 	val state by viewModel.state().collectAsStateWithLifecycle()
 	val filters = appsFilters(state)
+	val (listState, onRowFocused) = rememberTvRowList()
 
 	Column(Modifier.fillMaxSize()) {
 		TvScreenHeader(
@@ -77,11 +79,12 @@ fun TvAppsScreen(viewModel: AppsViewModel) {
 				)
 			} else {
 				LazyColumn(
-					modifier = Modifier.fillMaxSize(),
-					verticalArrangement = Arrangement.spacedBy(TvDims.RowGap),
-					contentPadding = PaddingValues(bottom = 24.dp)
+					state = listState,
+					modifier = Modifier.fillMaxSize().tvWholeRows(),
+					verticalArrangement = Arrangement.spacedBy(TvDims.RowGap)
 				) {
-					items(current.apps, key = { it.packageName }) { app ->
+					itemsIndexed(current.apps, key = { _, app -> app.packageName }) { index, app ->
+						Box(Modifier.onFocusChanged { if (it.hasFocus) onRowFocused(index) }) {
 						TvActionRow(dimmed = app.ignored) {
 							TvAppIcon(app.packageName, 56.dp)
 							Spacer(Modifier.width(18.dp))
@@ -114,6 +117,7 @@ fun TvAppsScreen(viewModel: AppsViewModel) {
 								},
 								onClick = { viewModel.ignore(app.packageName) }
 							)
+						}
 						}
 					}
 				}
