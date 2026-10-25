@@ -1,60 +1,125 @@
-# APKUpdater [![](https://github.com/rumboalla/apkupdater/workflows/Android%20Build/badge.svg)](https://github.com/rumboalla/apkupdater/actions?query=workflow%3A%22Android+Build%22)
-**APKUpdater** is an open source tool that simplifies the process of **finding updates** for your installed apps.  
-It provides similar functionality to an app store, but instead of depending on a single source, it aggregates the results from **APKMirror**, **Aptoide**, **F-Droid**, **IzzyOnDroid**, **APKPure**, **GitLab** and **GitHub**.
+# APKUpdater TV
 
-The 3.x branch is a full rewrite using modern technologies like **Jetpack Compose**, **Flow** and **WorkManager**.
+**A ten-foot fork of [APKUpdater](https://github.com/rumboalla/apkupdater).** Same updater
+engine, same sources, same scheduled checks — with the TV surface rebuilt for a remote and
+a sofa instead of a phone held in one hand.
 
-# Features
-* **Update Sources**: Find updates from **APKMirror**, **Aptoide**, **F-Droid**, **IzzyOnDroid**, **APKPure**, **GitLab** and **GitHub**.
-* **Search Sources**: Find new apps to install from **APKMirror**, **Aptoide**, **F-Droid**, **IzzyOnDroid**, **APKPure**, **GitLab** and **GitHub**.
-* Schedule **background update checks** and receive a **notification** when updates are found.
-* Supports **Android 5** (**21**) to **Android 14** (**34**).
-* Supports **Android TV**.
-* **Material Design 3** with **Dark**, **Light** and **System** theme support.
-* Supports **Material You** on Android 12+.
-* **Direct install** of updates for sources that support it.
-* Supports **installs without user interaction** on Android 12+.
-* **Root install** of updates.
-* No ads. No tracking.
-* **Languages**: English, Spanish, Dutch, German, Traditional Chinese, Simplified Chinese, Romanian, Italian, Portuguese, Russian, Turkish, Indonesian, Burmese, Malay, Hebrew.
+Forked from `rumboalla/apkupdater` at tag **3.0.3**. The phone UI is untouched and still the
+default everywhere else; the TV UI takes over on Leanback devices and can be forced on from
+Settings.
 
-# Download
-* [Stable Release (3.0.2)](https://github.com/rumboalla/apkupdater/releases/latest/download/com.apkupdater-release.apk)
-* [Older releases](https://github.com/rumboalla/apkupdater/releases)
+| | |
+| --- | --- |
+| Package | `com.apkupdater.tv` — installs alongside upstream, not over it |
+| Version | `3.0.3-tv.1` (versionCode 5201) |
+| Min / target SDK | 21 / 34 |
+| License | GPL-3.0 |
 
-# Translations
-If you want to help with translations, open a [Pull Request](https://github.com/rumboalla/apkupdater/pulls) or an [Issue](https://github.com/rumboalla/apkupdater/issues) with the translated [strings.xml](https://github.com/rumboalla/apkupdater/blob/3.x/app/src/main/res/values/strings.xml).
+## Screenshots
 
-* Dutch by [AnonymousWP](https://github.com/AnonymousWP)
-* German by [peat80](https://github.com/peat80)
-* Traditional Chinese by [abc0922001](https://github.com/abc0922001)
-* Simplified Chinese by [Nriver](https://github.com/Nriver)
-* Romanian by [StormProductionsMusic](https://github.com/StormProductionsMusic)
-* Italian by [NicKoehler](https://github.com/NicKoehler)
-* Portuguese by [zekabra](https://github.com/zekabra)
-* Russian by [Xenorant](https://github.com/Xenorant)
-* Turkish by [kyoyacchi](https://github.com/kyoyacchi)
-* Indonesian by [HazakuraID](https://github.com/HazakuraID)
-* Malay by [HazakuraID](https://github.com/HazakuraID)
-* Burmese by [kyawlinnthant](https://github.com/kyawlinnthant)
-* Hebrew by [electriquo](https://github.com/electriquo)
+| Updates | Apps |
+| --- | --- |
+| ![Updates with one pending update](docs/screenshots/updates-list.png) | ![Installed apps with filters](docs/screenshots/apps.png) |
+| **Search** | **Settings** |
+| ![Search results](docs/screenshots/search.png) | ![Settings](docs/screenshots/settings.png) |
+| **Scheduled checks** | **About** |
+| ![Hour stepper](docs/screenshots/settings-schedule.png) | ![About sub-page](docs/screenshots/about.png) |
+| **Loading** | **Nothing pending** |
+| ![Skeleton rows](docs/screenshots/updates-loading.png) | ![Empty state](docs/screenshots/updates-empty.png) |
 
-# Feedback
-- To give feedback and request new features go to [Discussions](https://github.com/rumboalla/apkupdater/discussions).
-- To report bugs, crashes, typos and translations go to [Issues](https://github.com/rumboalla/apkupdater/issues).
+All captures are 1080p from a Google TV emulator, driven with a D-pad, on this build.
 
-# Screenshots
+## Why a fork
 
-| ![1](https://github.com/rumboalla/apkupdater/assets/21153554/b5b4943b-e12a-43e2-a056-26d6f06f9bc4) | ![2](https://github.com/rumboalla/apkupdater/assets/21153554/c4679c1b-09d4-429d-9160-77d4d33b0a0f) | ![3](https://github.com/rumboalla/apkupdater/assets/21153554/7b89c5a6-672c-44e4-836e-e01f51f33591) | ![4](https://github.com/rumboalla/apkupdater/assets/21153554/7ec15783-e719-4feb-9e07-a14c0f1defcc) |
-|----------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------|
+Upstream's TV support is the phone layout rendered on a big screen. At three metres that
+means small text, no focus model worth the name, and controls that a D-pad cannot reach
+comfortably. This fork keeps the engine and replaces the surface.
 
-| ![5](https://github.com/rumboalla/apkupdater/assets/21153554/bbf1132a-b0b6-4890-aed7-8fe95c0da11b) | ![6](https://github.com/rumboalla/apkupdater/assets/21153554/32236bfb-b53e-4999-8363-e957fa8f77a9) |
-|----------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------|
+## What changed
 
-# Other Projects
-* [CoolRs](https://github.com/rumboalla/coolrs): A collection of Android RenderScript effects. 
-* [KryptoPrefs](https://github.com/rumboalla/KryptoPrefs): Kotlin library for handling encrypted SharedPreferences.
+- **Permanent left rail** (Updates / Apps / Search / Settings) with the current tab lit, a
+  10-foot type scale, overscan-safe margins, and one focus ring — the only glowing thing on
+  screen.
+- **Rows, not cards.** Icon, name, `old → new`, source, one-line changelog, and exactly one
+  primary action (Update) plus a quiet skip. The row highlights when its action holds focus;
+  the row itself is not a click target.
+- **Apps** with three inclusion filters (System / Store / Disabled) and one action per row
+  (Ignore / Include).
+- **Search** with a single field, debounced queries, and a remote that cannot get stuck in
+  it: down hands focus to the first result, left returns to the rail, and losing focus
+  dismisses the IME.
+- **Settings** with switches instead of sliders, a stepper for the alarm hour, cycle rows
+  only where there are 2–3 values, and About as a proper sub-page (Back closes it, focus is
+  restored).
+- **Loading is a skeleton of rows**, not a spinner; empty and error states explain, and the
+  header keeps the single primary action.
+- **3 dp focus rings** on small controls, 2 dp on full-width rows — a 2 dp line disappears
+  at three metres.
 
-# License
-Copyright &copy; 2016-2023 rumboalla.  
-Licensed under the [GNU General Public License v3](https://www.gnu.org/licenses/gpl-3.0.en.html).
+The rationale and the token/behaviour spec live in [PRODUCT.md](PRODUCT.md) and
+[DESIGN.md](DESIGN.md).
+
+Everything else is upstream: the seven sources, the WorkManager schedule, notifications,
+direct and root install, and the four route names (so notification intents still resolve).
+
+## Install
+
+### Release APK
+
+Download `apkupdater-tv-3.0.3-tv.1.apk` from [Releases](../../releases) and open it on the
+TV, or push it over ADB:
+
+```bash
+adb connect <TV_IP>:5555
+adb install -r apkupdater-tv-3.0.3-tv.1.apk
+```
+
+On first run the app opens **Install unknown apps** and asks you to allow it — it needs that
+to hand downloads to the system installer.
+
+### Side by side
+
+The package is `com.apkupdater.tv`, so it does not replace `com.apkupdater` /
+`com.apkupdater.ci`. Both can be installed at once; uninstall whichever you do not want.
+
+### First run
+
+1. The app opens on **Updates**. Press right for the header action, right again into the
+   list, OK to update.
+2. **Settings → Sources** — enable the sources you actually use.
+3. **Settings → Scheduled checks** — off by default; turn it on, pick the hour with the
+   stepper, choose a frequency.
+
+## Build
+
+```bash
+export JAVA_HOME=/path/to/jdk17
+export ANDROID_HOME=/path/to/android-sdk     # platform 34, build-tools 34.0.0
+./gradlew assembleRelease
+# -> app/build/outputs/apk/release/com.apkupdater.tv-release.apk
+```
+
+Signing is read from `local.properties` (git-ignored):
+
+```properties
+keystore.file=/absolute/path/to/keystore.jks
+keystore.password=…
+keystore.keyalias=…
+keystore.keypassword=…
+```
+
+Without those keys the release build falls back to the debug keystore, which is fine for
+local testing but cannot update an installed copy signed with another key.
+
+## Upstream
+
+- Source: [rumboalla/apkupdater](https://github.com/rumboalla/apkupdater) — all credit for
+  the engine, the sources and the phone UI belongs there.
+- Issues with the updater itself belong upstream; issues with the TV layout belong here.
+- Translations: the fork adds a handful of English `tv_*` strings and does not yet translate
+  them. PRs welcome.
+
+## License
+
+GPL-3.0, unchanged. Copyright &copy; 2016-2023 rumboalla; TV surface modifications
+&copy; 2026 the fork's author. See [LICENSE](LICENSE).

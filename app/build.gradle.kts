@@ -12,11 +12,11 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.apkupdater"
+        applicationId = "com.apkupdater.tv"
         minSdk = 21
         targetSdk = 34
-        versionCode = 52
-        versionName = "3.0.3"
+        versionCode = 5201
+        versionName = "3.0.3-tv.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }

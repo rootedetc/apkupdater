@@ -69,4 +69,49 @@
         <item quantity="other">Found %1$d updates.</item>
     </plurals>
 
+    <!-- TV (10-foot) interface -->
+    <string name="tv_app_name">APKUpdater TV</string>
+    <string name="tv_check_updates">Check for updates</string>
+    <string name="tv_check_again">Check again</string>
+    <string name="tv_update">Update</string>
+    <string name="tv_skip_version">Skip this version</string>
+    <string name="tv_up_to_date_title">You\'re all caught up</string>
+    <string name="tv_up_to_date_body">New versions show up here as soon as GitHub, F-Droid, APKPure, Aptoide or ApkMirror publish them.</string>
+    <string name="tv_error_title">Couldn\'t check for updates</string>
+    <string name="tv_error_body">A source didn\'t answer. Check the network, then try again.</string>
+    <string name="tv_try_again">Try again</string>
+    <string name="tv_updates_ready">%1$d updates ready</string>
+    <string name="tv_updates_one">1 update ready</string>
+    <string name="tv_updates_checking">Checking your sources…</string>
+    <string name="tv_install">Install</string>
+    <string name="tv_updating">Updating</string>
+    <string name="tv_ignored">Ignored</string>
+    <string name="tv_ignore">Ignore</string>
+    <string name="tv_include">Include</string>
+    <string name="tv_filter_system">System</string>
+    <string name="tv_filter_store">Store</string>
+    <string name="tv_filter_disabled">Disabled</string>
+    <string name="tv_apps_shown">%1$d installed apps</string>
+    <string name="tv_apps_shown_one">1 installed app</string>
+    <string name="tv_apps_empty_title">Nothing to show</string>
+    <string name="tv_apps_empty_body">Every installed app is filtered out. Turn a filter back on to see them.</string>
+    <string name="tv_search_hint">Search apps</string>
+    <string name="tv_search_body">Type at least three characters. APKUpdater searches GitHub, F-Droid, APKPure, Aptoide and ApkMirror.</string>
+    <string name="tv_search_results">%1$d results</string>
+    <string name="tv_search_one_result">1 result</string>
+    <string name="tv_search_no_matches">No matches</string>
+    <string name="tv_search_no_matches_body">Nothing on your enabled sources matches “%1$s”. Check Settings → Sources, or try a shorter name.</string>
+    <string name="tv_about_body">Version, licenses, and ways to donate.</string>
+    <string name="tv_about_subtitle">Free, open source, no ads, no tracking.</string>
+    <string name="tv_link_source">Source code, releases, and issues.</string>
+    <string name="tv_link_donate">Donate directly to the charity.</string>
+    <string name="tv_copy_body">Copy the installed app list to the clipboard.</string>
+    <string name="tv_about">About</string>
+    <string name="tv_back">Back to settings</string>
+    <string name="tv_version">Version</string>
+    <string name="tv_section_interface">Interface</string>
+    <string name="tv_section_schedule">Scheduled checks</string>
+    <string name="tv_root_hint">Root installs only work on rooted devices.</string>
+    <string name="tv_tv_ui_hint">TV layout is on. Turn it off to use the phone layout.</string>
+
 </resources>

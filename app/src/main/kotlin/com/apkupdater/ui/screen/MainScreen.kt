@@ -49,8 +49,11 @@ import com.apkupdater.R
 import com.apkupdater.data.snack.ISnack
 import com.apkupdater.data.snack.InstallSnack
 import com.apkupdater.data.ui.Screen
+import com.apkupdater.prefs.Prefs
 import com.apkupdater.ui.component.BadgeText
 import com.apkupdater.ui.theme.AppTheme
+import com.apkupdater.ui.tv.TvShell
+import com.apkupdater.ui.tv.TvTheme
 import com.apkupdater.viewmodel.AppsViewModel
 import com.apkupdater.viewmodel.MainViewModel
 import com.apkupdater.viewmodel.SearchViewModel
@@ -61,6 +64,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import org.koin.androidx.compose.get
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import kotlin.coroutines.CoroutineContext
@@ -109,19 +113,39 @@ fun MainScreen(mainViewModel: MainViewModel = koinViewModel()) {
 		handleSnack(context, snackBarHostState, it)
 	}
 
-	AppTheme(theme) {
-		Scaffold(
-			snackbarHost = { SnackbarHost(snackBarHostState) },
-			bottomBar = { BottomBar(mainViewModel, navController) }
-		) { padding ->
-			Box(modifier = Modifier.pullRefresh(pullToRefresh)) {
-				NavHost(navController, padding, mainViewModel, appsViewModel, updatesViewModel, searchViewModel, settingsViewModel)
-				PullRefreshIndicator(
-					refreshing = isRefreshing.value,
-					state = pullToRefresh,
-					modifier = Modifier.align(Alignment.TopCenter),
-					contentColor = MaterialTheme.colorScheme.primary
+	val tvUi = get<Prefs>().androidTvUi.get()
+
+	if (tvUi) {
+		TvTheme {
+			Scaffold(
+				snackbarHost = { SnackbarHost(snackBarHostState) },
+				containerColor = MaterialTheme.colorScheme.background
+			) { _ ->
+				TvShell(
+					navController = navController,
+					mainViewModel = mainViewModel,
+					appsViewModel = appsViewModel,
+					updatesViewModel = updatesViewModel,
+					searchViewModel = searchViewModel,
+					settingsViewModel = settingsViewModel
 				)
+			}
+		}
+	} else {
+		AppTheme(theme) {
+			Scaffold(
+				snackbarHost = { SnackbarHost(snackBarHostState) },
+				bottomBar = { BottomBar(mainViewModel, navController) }
+			) { padding ->
+				Box(modifier = Modifier.pullRefresh(pullToRefresh)) {
+					NavHost(navController, padding, mainViewModel, appsViewModel, updatesViewModel, searchViewModel, settingsViewModel)
+					PullRefreshIndicator(
+						refreshing = isRefreshing.value,
+						state = pullToRefresh,
+						modifier = Modifier.align(Alignment.TopCenter),
+						contentColor = MaterialTheme.colorScheme.primary
+					)
+				}
 			}
 		}
 	}
